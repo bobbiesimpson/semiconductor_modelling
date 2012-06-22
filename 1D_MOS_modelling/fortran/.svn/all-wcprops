@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran
+END
+output.log
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/output.log
+END
+cn_dg.dat
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/cn_dg.dat
+END
+qs_dg.f
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/qs_dg.f
+END
+d.d
+K 25
+svn:wc:ra_dav:version-url
+V 93
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/d.d
+END
+a.out
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/a.out
+END
+1D.inp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/1D.inp
+END
+pot.dat
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/pot.dat
+END
+cband.dat
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/fortran/cband.dat
+END

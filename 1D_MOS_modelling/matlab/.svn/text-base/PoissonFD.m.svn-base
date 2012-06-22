@@ -1,0 +1,119 @@
+% finite difference Poisson 1D solver
+
+
+doWePlot = true;        %   are we plotting?
+
+
+gradingRatio =1;        %   length of last element / first element
+
+ne = 99;
+L = 99e-7;              %   length of semiconductor
+Lox = 1e-7;            %   oxide thickness
+deltaX = L / ne;        %   node spacing
+nox = round(Lox / deltaX);     %   This MUST be an integer
+nn = ne+nox + 1;        %   number of nodes
+V0 =20.0;              %   prescribed voltage on LHS
+VL = 0.0;               %   prescribed voltage on RHS
+
+q = 1.60219e-19;        %   electronic charge
+eps_0 = 8.85419e-14;	% 	absolute permittivity (C V^-1 cm^-1)
+eps_ox = 3.9;           %   relative permittivity in oxide
+eps_sr = 11.9;			% 	relative permittivity of silicon dioxide
+k = 1.38062e-23;		% 	Boltzmann constant
+T = 300.0;				% 	temperature (K)
+ni = 1.45e10;			% 	intrinsic concentration (cm^-3)
+Na = 5.0e18;			% 	concentration of acceptor atoms (cm^-3)
+kT = k * T;             %	simply k * T
+ft = kT / q;            %   simply kT / q
+phi_n =  ft * log(Na/ni);%   quasi fermi levels
+phi_p = phi_n;
+
+% ---------------- generate the mesh ------------------------
+
+meshcoords = gradedMesh( 0,L + Lox,Lox,nox,ne,gradingRatio);
+interfaceNode = nox + 1; 
+
+fixedDofs = [1 nn];                 %   Dirichlet nodes
+fixedDofValues = [V0 VL];           %   BC values
+
+% ---------------- NR initialisation  ------------------------
+
+tolerance = 1e-8;
+max_iterations = 1000;
+
+currentPsi = zeros(nn,1);               %   current psi solution
+currentPsi(1) = V0;
+currentPsi(nn) = VL;
+
+iteration = 1;
+error = 1.0;
+errorValues = zeros(1, max_iterations);
+
+while error > tolerance,     %  loop until we've converged
+    
+    K = zeros(nn, nn);                  %   create and zero global matrices
+    RHS = zeros(nn, 1);
+    K(fixedDofs,fixedDofs) = speye(length(fixedDofs));
+    RHS(fixedDofs) = fixedDofValues;
+    
+    if iteration > max_iterations
+        disp('reached max number of iterations');
+        break;
+    end
+    
+    for node = 2:nn-1
+        if(node <= (interfaceNode - 1) )        %   we're in the oxide completely
+            epsilon_nL = eps_0*eps_ox;
+            epsilon_nC = eps_0*eps_ox;
+            epsilon_nR = eps_0*eps_ox;
+            discRHS = 0;
+            doping = 0;
+        elseif(node == interfaceNode)
+            epsilon_nL = eps_0*eps_ox;
+            epsilon_nC = (eps_0*eps_ox + eps_0*eps_sr)/2;
+            epsilon_nR = eps_0*eps_sr;
+            discRHS = deltaX / 2;
+            doping = Na;
+        else
+            epsilon_nL = eps_0*eps_sr;
+            epsilon_nC = eps_0*eps_sr;
+            epsilon_nR = eps_0*eps_sr;
+            doping = Na;
+            discRHS = deltaX;
+        end
+                
+        K(node,node-1) = K(node,node-1) + epsilon_nL / deltaX;
+        K(node,node) = K(node,node) - 2.0 * epsilon_nC / deltaX;
+        K(node,node+1) = K(node,node+1) + epsilon_nR / deltaX;
+        
+        [E, Ederiv] = getForcingTermAndDeriv(currentPsi(node), ft, q, ...
+                                                phi_n, phi_p, ni, doping);
+        K(node,node) = K(node,node) - Ederiv * discRHS;
+        RHS(node) = RHS(node) + discRHS * ( E - Ederiv * currentPsi(node)); 
+    end
+    newPsi = K\RHS;
+    
+    error = sum(abs((newPsi - currentPsi)) ./ (currentPsi + 1));
+    fprintf('iteration number %d, error %e\n', iteration, error);
+    errorValues(iteration) = error;
+    currentPsi = newPsi;
+    iteration = iteration + 1;
+end
+
+if doWePlot
+%    clf;
+%    figure(1);
+   hold on;
+   plot(meshcoords, currentPsi, 'bo-');
+%    xlabel('x (nm)');
+%    ylabel('potential (V)');
+   hold off;
+%    figure(2);
+%    x = 1:iteration-1;
+%    semilogy(x, errorValues(x));
+%    xlabel('iteration number');
+%    ylabel('residual');
+end
+
+
+

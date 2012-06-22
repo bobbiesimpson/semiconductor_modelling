@@ -1,0 +1,143 @@
+K 25
+svn:wc:ra_dav:version-url
+V 80
+/svn/myrepo/!svn/ver/59/programming/semiconductor%20modelling/2d%20pn%20junction
+END
+bubbleDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/bubbleDeriv.m
+END
+FE2DpnJunction.m~
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/57/programming/semiconductor%20modelling/2d%20pn%20junction/FE2DpnJunction.m~
+END
+FE2DpnJunction.m
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/59/programming/semiconductor%20modelling/2d%20pn%20junction/FE2DpnJunction.m
+END
+pn2DJunctionMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/pn2DJunctionMesh.m
+END
+bubble.m
+K 25
+svn:wc:ra_dav:version-url
+V 89
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/bubble.m
+END
+defineBoundaryElConn.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/defineBoundaryElConn.m
+END
+bubbleQ4ShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/bubbleQ4ShapeFnDeriv.m
+END
+bubbleShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/bubbleShapeFn.m
+END
+getAdvectionParameters.m
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/55/programming/semiconductor%20modelling/2d%20pn%20junction/getAdvectionParameters.m
+END
+EandDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 92
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/EandDeriv.m
+END
+lagrange_basis.m
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/lagrange_basis.m
+END
+defineEdges.m
+K 25
+svn:wc:ra_dav:version-url
+V 94
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/defineEdges.m
+END
+assignFirstGuess.m
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/assignFirstGuess.m
+END
+gradNplotter.m
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/2d%20pn%20junction/gradNplotter.m
+END
+assignDirichletNodes.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/assignDirichletNodes.m
+END
+plotGIDmeshVariables.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/56/programming/semiconductor%20modelling/2d%20pn%20junction/plotGIDmeshVariables.m
+END
+linearShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/linearShapeFnDeriv.m
+END
+plotCurrentVariables.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/54/programming/semiconductor%20modelling/2d%20pn%20junction/plotCurrentVariables.m
+END
+getNodalCoordMatrices.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/46/programming/semiconductor%20modelling/2d%20pn%20junction/getNodalCoordMatrices.m
+END
+lgwt.m
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/myrepo/!svn/ver/43/programming/semiconductor%20modelling/2d%20pn%20junction/lgwt.m
+END
+applyBCs.m
+K 25
+svn:wc:ra_dav:version-url
+V 91
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/applyBCs.m
+END
+getArtificialDiffusion.m
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/55/programming/semiconductor%20modelling/2d%20pn%20junction/getArtificialDiffusion.m
+END
+linearShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/44/programming/semiconductor%20modelling/2d%20pn%20junction/linearShapeFn.m
+END

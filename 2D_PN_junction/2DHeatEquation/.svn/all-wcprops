@@ -1,0 +1,53 @@
+K 25
+svn:wc:ra_dav:version-url
+V 95
+/svn/myrepo/!svn/ver/46/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation
+END
+FEHeatEqn2D.m~
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/FEHeatEqn2D.m~
+END
+FEHeatEqn2D.m
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/FEHeatEqn2D.m
+END
+FEMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/46/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/FEMesh.m
+END
+PlotMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/PlotMesh.m
+END
+quadrature.m~
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/quadrature.m~
+END
+GetMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/GetMesh.m
+END
+gaussQuad.m
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/gaussQuad.m
+END
+quadrature.m
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/2DHeatEquation/quadrature.m
+END

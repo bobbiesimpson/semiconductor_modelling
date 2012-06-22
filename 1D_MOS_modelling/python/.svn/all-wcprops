@@ -1,0 +1,125 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python
+END
+meshGrading.py
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/meshGrading.py
+END
+FDpoisson1D.py
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/FDpoisson1D.py
+END
+point.py
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/point.py
+END
+shapeFunctions.py
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/shapeFunctions.py
+END
+FEpoisson1D.py
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/FEpoisson1D.py
+END
+poisson.py
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/poisson.py
+END
+meshGrading.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/meshGrading.pyc
+END
+point.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/point.pyc
+END
+shapeFunctions.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/shapeFunctions.pyc
+END
+FEpoisson1D.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/FEpoisson1D.pyc
+END
+exponentialPlot
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/exponentialPlot
+END
+FEPoisson1D.tar.gz
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/FEPoisson1D.tar.gz
+END
+FE_2GP_ConvVsFD.eps
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/FE_2GP_ConvVsFD.eps
+END
+residual_6GP_potential_2V.eps
+K 25
+svn:wc:ra_dav:version-url
+V 118
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/residual_6GP_potential_2V.eps
+END
+gaussNodes.py
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/gaussNodes.py
+END
+gaussNodes.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/gaussNodes.pyc
+END
+forcingTerm.py
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/forcingTerm.py
+END
+forcingTerm.pyc
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/forcingTerm.pyc
+END
+exponentialPlot.py
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/exponentialPlot.py
+END
+out.dat
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/python/out.dat
+END

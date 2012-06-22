@@ -1,0 +1,62 @@
+%   The functions which are obtained from the analytical solution of the 1D
+%   p-n junction
+
+%   constants
+
+% clc
+% clear all
+% close all
+
+q = 1.60219e-19;        %   electronic charge
+eps_0 = 8.85419e-14;	% 	absolute permittivity (C V^-1 cm^-1)
+eps_sr = 11.7;			% 	relative permittivity of silicon dioxide
+eps = eps_sr * eps_0;
+k = 1.38062e-23;		% 	Boltzmann constant
+T = 300.0;				% 	temperature (K)
+ni = 1.45e10;			% 	intrinsic concentration (cm^-3)
+Na = 1e17;              % 	concentration of acceptor atoms (cm^-3)
+Nd = 1e17;
+kT = k * T;             %	simply k * T
+ft = kT / q;            %   simply kT / q
+Vapp = 0;             %   max voltage for voltage sweep
+
+Vbi = ft * log((Na * Nd) / ni^2);   %   built in voltage
+
+%   find the depletion region widths xn and xp
+
+xp = sqrt( Vbi / ( (q*Na)/(2*eps) * (1 + Na/Nd) ) );
+xn = Na/Nd * xp;
+
+% -------------------- potential ------------------------------
+
+x_pregion = linspace(-xp*1.5,0);
+psi_p = q*Na*xp^2 / (2*eps) * ( 1 + x_pregion./xp ).^2 - Vbi;
+dpsi_p = q*Na*xp^2 / (2*eps) *(2/xp + 2*x_pregion./xp^2);
+x_nregion = linspace(0,xn*1.5);
+psi_n = -q*Nd*xn^2 / (2*eps) * ( 1 - x_nregion./xn ).^2;
+dpsi_n = -q*Nd*xn^2 / (2*eps) * (-2/xn + 2*x_nregion./xn^2 );
+x = [x_pregion x_nregion];
+psi = [psi_p psi_n];
+dpsi = [dpsi_p dpsi_n];
+
+fprintf('Value of xp: %ecm \nValue of xn:%ecm\n', xp, xn);
+figure
+plot(x,psi)
+figure
+plot(x,dpsi)
+
+% -------------------- electron concentration ----------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+

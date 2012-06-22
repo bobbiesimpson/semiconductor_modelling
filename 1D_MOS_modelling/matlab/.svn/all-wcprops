@@ -1,0 +1,173 @@
+K 25
+svn:wc:ra_dav:version-url
+V 88
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab
+END
+hatEnrichment.m~
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/hatEnrichment.m~
+END
+Poisson.m~
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/Poisson.m~
+END
+stiffnessMatrix_enriched.m~
+K 25
+svn:wc:ra_dav:version-url
+V 116
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/stiffnessMatrix_enriched.m~
+END
+PoissonSiDisc.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonSiDisc.m
+END
+hatEnrichment.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/hatEnrichment.m
+END
+simpleForcingTerm.m
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/simpleForcingTerm.m
+END
+PoissonLinearE.m
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonLinearE.m
+END
+PoissonEnriched.m~
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonEnriched.m~
+END
+Poisson.m
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/Poisson.m
+END
+getForcingTermAndDeriv.m~
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/getForcingTermAndDeriv.m~
+END
+stiffnessMatrix_enriched.m
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/stiffnessMatrix_enriched.m
+END
+PoissonEnriched.m
+K 25
+svn:wc:ra_dav:version-url
+V 106
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonEnriched.m
+END
+getForcingTermAndDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/getForcingTermAndDeriv.m
+END
+gaussQuad.m
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/gaussQuad.m
+END
+EandDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/EandDeriv.m
+END
+PoissonFD.m~
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonFD.m~
+END
+gradedMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/gradedMesh.m
+END
+PoissonSimple.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonSimple.m
+END
+PoissonFD.m
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/PoissonFD.m
+END
+.DS_Store
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/.DS_Store
+END
+._Poisson.m
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/._Poisson.m
+END
+getScaledForcingTermAndDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/getScaledForcingTermAndDeriv.m
+END
+._getForcingTermAndDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 115
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/._getForcingTermAndDeriv.m
+END
+linearShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/linearShapeFnDeriv.m
+END
+heavisideEnrichment.m
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/heavisideEnrichment.m
+END
+linearShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/linearShapeFn.m
+END
+._.DS_Store
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/._.DS_Store
+END
+hatEnrichmentDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20MOS%20modelling/matlab/hatEnrichmentDeriv.m
+END

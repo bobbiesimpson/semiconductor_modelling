@@ -1,0 +1,5 @@
+1	Flag for Classical (0) or Density Gradient (1) solution
+1.5	Gate potential (V)
+5e17	Substrate p-doping (cm-3)
+2.0	Oxide thickness (nm)
+0.3	Effective mass of Si for Density Gradient

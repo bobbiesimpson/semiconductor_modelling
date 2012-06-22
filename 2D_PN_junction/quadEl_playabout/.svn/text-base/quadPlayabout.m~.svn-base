@@ -1,0 +1,27 @@
+% quadrilateral playabout
+
+addpath ../
+
+% c=1/sqrt(2);
+% nodes=[1/2*c 0; 2*c 1.5*c; 3/2*c 2*c; 0 0.5*c];
+% [shape shapeDeriv]=lagrange_basis('L4', [1 1]);
+% jacobian=shapeDeriv*nodes;
+% invJ=inv(jacobian);
+% dNdx=invJ*shapeDeriv;
+% gradPsi=dNdx* [0.5*c 2*c 3/2*c 0]'
+
+xc=0.5; yc=0.5;
+[x y]=meshgrid(0.2:0.01:0.7, 0.2:0.01:0.7);
+N1=1/4*(1-x).*(1-y);
+dN1=-1/4*(1-y);
+surf(x,y,N1)
+
+r=sqrt((x-xc).^2 +(y-yc).^2);
+theta=atan2((y-yc),(x-xc));
+
+gradNpsi=N1.*-1./(2*sqrt(r)).*sin(theta/2) + dN1.*sqrt(r).*sin(theta/2);
+gradNpsi=N1.*1./(2*sqrt(r)).*cos(theta/2) + dN1.*sqrt(r).*cos(theta/2);
+
+
+surf(x,y,gradNpsi.^2.*r.*)
+

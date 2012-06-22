@@ -1,0 +1,11 @@
+function [ chi ] = hatEnrichment( x, x_i, nodalX )
+% This is our hat enrichmnet function with the following arguments
+%   x           Our 1D x-coordinate
+%   xi          The c-coordinate of our interface
+%   nodalX      If we are using nodal shifting, the x-coord of the relevant
+%               node
+if(nargins < 3)
+nodalChiValue = abs(nodalX - x_i);
+chi = abs( x - x_i) - nodalChiValue;
+end
+

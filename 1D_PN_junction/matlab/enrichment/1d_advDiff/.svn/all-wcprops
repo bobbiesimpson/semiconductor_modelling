@@ -1,0 +1,83 @@
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/54/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff
+END
+GalerkinFE.m~
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/GalerkinFE.m~
+END
+elm_line1.m
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/myrepo/!svn/ver/28/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/elm_line1.m
+END
+GalerkinFE.m
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/GalerkinFE.m
+END
+linearShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/linearShapeFnDeriv.m
+END
+bubbleShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/bubbleShapeFnDeriv.m
+END
+carrierConcentrations_0.eps
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/carrierConcentrations_0.eps
+END
+bubbleShapeFnHoles.m
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/svn/myrepo/!svn/ver/35/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/bubbleShapeFnHoles.m
+END
+potentials_0.eps
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/potentials_0.eps
+END
+gaussQuad.m
+K 25
+svn:wc:ra_dav:version-url
+V 121
+/svn/myrepo/!svn/ver/28/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/gaussQuad.m
+END
+advDiff_XFEMvsFEM.eps
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/svn/myrepo/!svn/ver/40/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/advDiff_XFEMvsFEM.eps
+END
+bubbleFn1Dplotter.m
+K 25
+svn:wc:ra_dav:version-url
+V 129
+/svn/myrepo/!svn/ver/54/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/bubbleFn1Dplotter.m
+END
+linearShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/linearShapeFn.m
+END
+bubbleShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 125
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/1d_advDiff/bubbleShapeFn.m
+END

@@ -1,0 +1,119 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/myrepo/!svn/ver/54/programming/semiconductor%20modelling/1d%20pn%20junction/matlab
+END
+electronEnrichment.m
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/24/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/electronEnrichment.m
+END
+._BernoulliFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/._BernoulliFn.m
+END
+N_EnrichmentFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/22/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/N_EnrichmentFn.m
+END
+gaussQuad.m
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/gaussQuad.m
+END
+output1.dat
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/37/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/output1.dat
+END
+twoGradedMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/twoGradedMesh.m
+END
+output2.dat
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/37/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/output2.dat
+END
+pnJunctionFD.m~
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/pnJunctionFD.m~
+END
+EandDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/EandDeriv.m
+END
+pnJunctionFD.m
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/pnJunctionFD.m
+END
+pnJunctionFE.m
+K 25
+svn:wc:ra_dav:version-url
+V 102
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/pnJunctionFE.m
+END
+getArtificalDiffusion.m
+K 25
+svn:wc:ra_dav:version-url
+V 111
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/getArtificalDiffusion.m
+END
+linearShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/35/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/linearShapeFnDeriv.m
+END
+plotCurrentVariables.m
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/myrepo/!svn/ver/52/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/plotCurrentVariables.m
+END
+._pnJunctionFD.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/._pnJunctionFD.m
+END
+linearShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/35/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/linearShapeFn.m
+END
+BernoulliFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/21/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/BernoulliFn.m
+END
+._pnJunctionFE.m
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/._pnJunctionFE.m
+END
+export.csv
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/6/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/export.csv
+END

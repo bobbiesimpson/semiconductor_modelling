@@ -1,0 +1,113 @@
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/54/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment
+END
+tanhTesting.m
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/myrepo/!svn/ver/25/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/tanhTesting.m
+END
+electronEnrichment.m
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/myrepo/!svn/ver/25/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/electronEnrichment.m
+END
+PoissonEnriched_pn.m
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/myrepo/!svn/ver/25/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/PoissonEnriched_pn.m
+END
+twoGradedMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/myrepo/!svn/ver/8/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/twoGradedMesh.m
+END
+gaussQuad.m
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/8/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/gaussQuad.m
+END
+PoissonEnriched_mos_cap.m
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/myrepo/!svn/ver/8/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/PoissonEnriched_mos_cap.m
+END
+pn_enrichment_function.m
+K 25
+svn:wc:ra_dav:version-url
+V 123
+/svn/myrepo/!svn/ver/13/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/pn_enrichment_function.m
+END
+MockDiode.m
+K 25
+svn:wc:ra_dav:version-url
+V 110
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/MockDiode.m
+END
+MockEnrich_n.m
+K 25
+svn:wc:ra_dav:version-url
+V 113
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/MockEnrich_n.m
+END
+EandDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/8/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/EandDeriv.m
+END
+stringForDATfile.m
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/stringForDATfile.m
+END
+MockDiodeFD.m
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/MockDiodeFD.m
+END
+linearShapeFnDeriv.m
+K 25
+svn:wc:ra_dav:version-url
+V 119
+/svn/myrepo/!svn/ver/23/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/linearShapeFnDeriv.m
+END
+L2norm.m
+K 25
+svn:wc:ra_dav:version-url
+V 107
+/svn/myrepo/!svn/ver/19/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/L2norm.m
+END
+MockDiodeFE.m
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/myrepo/!svn/ver/36/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/MockDiodeFE.m
+END
+figureProcessing.m
+K 25
+svn:wc:ra_dav:version-url
+V 117
+/svn/myrepo/!svn/ver/35/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/figureProcessing.m
+END
+BernoulliFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 112
+/svn/myrepo/!svn/ver/27/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/BernoulliFn.m
+END
+linearShapeFn.m
+K 25
+svn:wc:ra_dav:version-url
+V 114
+/svn/myrepo/!svn/ver/34/programming/semiconductor%20modelling/1d%20pn%20junction/matlab/enrichment/linearShapeFn.m
+END

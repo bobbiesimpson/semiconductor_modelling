@@ -1,0 +1,378 @@
+% This p-n junction solver does a convergence study
+clear all
+%close all
+clc
+
+addpath ../
+addpath ../enrichment/1d_advDiff
+
+global q eps Na Nd x_jun nep Vbi xn xp
+
+doWePlot = true;        %   are we plotting?
+
+% -----------------------------
+% -------- Solution routines --
+% -----------------------------
+SUPG=true;             %   Streamline upwind Petrov Galerkin method
+bubble=false;           %   bubble functions (special shape functions)
+groupedFE=false;        %   product approximation method (equivalent to FD for Poisson's equation)
+
+% -----------------------------
+% -------- Device constants  --
+% -----------------------------
+q = 1.60219e-19;        %   electronic charge
+eps_0 = 8.85419e-14;	% 	absolute permittivity (C V^-1 cm^-1)
+eps_sr = 11.7;			% 	relative permittivity of silicon dioxide
+eps = eps_sr * eps_0;
+k = 1.38062e-23;		% 	Boltzmann constant
+T = 300.0;				% 	temperature (K)
+ni = 1.45e10;			% 	intrinsic concentration (cm^-3)
+Na = 5e17;              % 	concentration of acceptor atoms (cm^-3)
+Nd = 5e17;
+kT = k * T;             %	simply k * T
+ft = kT / q;            %   simply kT / q
+mu_n = 1400;            %   electron mobility
+mu_p = 450;             %   hole mobility (cm^2 V^-1 s^-1)
+D_n = ft * mu_n;        %   electron diffussion coefficient
+D_p = ft * mu_p;        %   hole diffussion coefficient
+Vmax = 0.7;             %   max voltage for voltage sweep
+Vmin = 0;
+V0 = Vmin;                 %   initial voltage is always zero
+VL = 0;                 %   potential on RHS
+
+% -----------------------------
+% -------- geometry -----------
+% -----------------------------
+
+L = 1000e-7;            %   length of semiconductor (cm)
+x_jun = 500e-7;         %   coord of p-n junction (cm)
+ngp=6;
+
+ne_start=10;
+ne_jump=10;
+ne_finish=300;
+loop=0;
+num_meshes=floor((ne_finish-ne_start)/ne_jump);
+
+L2psi_mesh = zeros(1,num_meshes);
+L2n_mesh = zeros(1,num_meshes);
+L2p_mesh = zeros(1,num_meshes);
+DOF = zeros(1,num_meshes);
+numSteps = zeros(1,num_meshes);
+
+% --------------------------------
+% -------- NR initilastion + GPs -
+% --------------------------------
+
+tolerance = 1e-10;
+max_iterations = 500;
+[gaussPoint gaussWeight] = gaussQuad(ngp);   %   get gauss pts and weights
+
+% --------------------------------
+% -------- Start solution --------
+% --------------------------------
+
+for netotal=ne_start:ne_jump:ne_finish
+    
+    loop = loop+1;
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    % ---------------- mesh paramters ------------------
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    nep = floor(netotal*0.5);              %   no. elements in p-region
+    nen = floor(netotal*0.5);              %   no. elements in n-region
+    netotal = nen+nep;      %   total number of elements
+    nn_jun = nep + 1;       %   node number at junction
+    nn = netotal + 1;       %   number of nodes
+    gradingRatio = 1;       %   length of last element / first element
+
+    meshcoords = twoGradedMesh(0,x_jun,L,nep,gradingRatio,nen,gradingRatio);
+    elementConnectivity = [[1:netotal]' [2:netotal+1]'];  %   node connectivity
+
+    % --------------------------------
+    % -------- bcs & initial guesses -
+    % --------------------------------
+    
+    fixedDofs = [1 nn];                 %   Dirichlet nodes
+    freeDof = [2:nn-1];
+    psi_LHS = V0 - ft * log((Na * Nd) / ni^2);  % potential @ LHS
+    psi_fixedDofValues = [psi_LHS VL];  %   BC values of potential
+    n_fixedDofValues = [ni^2/Na Nd];
+    p_fixedDofValues = [Na ni^2/Nd];
+    
+    previousPsi = ones(nn,1);      %   The solution from the previous step
+    currentPsi = zeros(nn,1);
+    currentPsi(fixedDofs) = psi_fixedDofValues;
+    currentPsi(1:nn_jun-1) = psi_LHS;
+    currentPsi(nn_jun) = psi_LHS/2;
+    currentPsi(nn_jun+1:nn) = 0;
+    
+    current_n = zeros(nn,1);
+    current_n(1:nn_jun-1) = ni^2/Na;
+    current_n(nn_jun+1:nn) = Nd;     %   set electron conc. in n-region
+    current_n(nn_jun) = Nd/2;        %   set elec. con. at junction (avg)
+    
+    current_p = zeros(nn,1);
+    current_p(1:nn_jun-1) = Na;      %   set hole conc. in n-region
+    current_p(nn_jun) = Na/2;        %   set hole. con. at junction (avg)
+    current_p(nn_jun+1:nn) = ni^2/Nd;
+    
+    current_phi_n = zeros(nn,1);
+    current_phi_p = zeros(nn,1);
+    current_phi_n(:) = currentPsi(:) - ft * log(current_n(:)./ni);
+    current_phi_p(:) = ft * log(current_p(:)./ni) + currentPsi(:);
+
+    %   start the outer loop
+    
+    psi_diff = 1;       %   rel. difference between potential solns
+    outer_iteration = 1;
+    
+    while(true)
+        
+        if outer_iteration > max_iterations
+            disp('reached max number of iterations for outer loop');
+            break;
+        end
+        
+        if(outer_iteration ~= 1)    %   we update our quasi-Fermi level
+            current_phi_n(:) = currentPsi(:) - ft * log(current_n(:)./ni);
+            current_phi_p(:) = ft * log(current_p(:)./ni) + currentPsi(:);
+        end
+        
+        %   inner loop initialisation
+        inner_iteration = 1;
+        residualRatio = 1;
+        residualValues = zeros(1, max_iterations);
+        
+        % --------------------------------
+        % -------- Poisson solver --------
+        % --------------------------------
+        while residualRatio > tolerance,        %  loop until we've converged
+            
+            if inner_iteration > max_iterations
+                disp('reached max number of iterations for poisson solver');
+                break;
+            end
+            
+            K = zeros(nn, nn);                  %   create and zero global matrices
+            T = zeros(nn, nn);
+            M = zeros(nn, nn);
+            Fb = zeros(nn, 1);
+            
+            for element = 1:netotal
+                K_el = zeros(2, 2); M_el = zeros(2, 2); Fb_el = zeros(2,1);
+                nodes = elementConnectivity(element,:);
+                x1 = meshcoords(nodes(1));
+                x2 = meshcoords(nodes(2));
+                el_length = x2 - x1;
+                detJacob = el_length / 2;
+                
+                if(element < nep + 1)
+                    doping = -Na;           %   p-type doping
+                else
+                    doping = Nd;            %   n-type doping
+                end
+                
+                k11 = (1 / el_length);      %   stiffness matrix
+                k12 = -k11;
+                K_el = [ k11 k12 ; k12 k11] .* eps;
+                
+                if groupedFE
+                    % The grouped FE is directly equivalent to FD for the
+                    % poisson equation. See pg 462 of Comp Partial Diff Eqns by
+                    % Langtangen
+                    nodalPsi=currentPsi(nodes);
+                    nodalphi_n=current_phi_n(nodes);
+                    nodalphi_p=current_phi_p(nodes);
+                    nodal_n=ni*exp((nodalPsi-nodalphi_n)/ft);
+                    nodal_p=ni*exp((nodalphi_p-nodalPsi)/ft);
+                    Enodal=-q*(-nodal_n+nodal_p+doping);
+                    EDnodal=q*1/ft*(nodal_n+nodal_p);
+
+                    M_el=el_length/2*diag(EDnodal);
+                    Fb_el=el_length/2*Enodal;
+                else
+                    for gp = 1:length(gaussPoint)
+                        gpt = gaussPoint(gp);
+                        gwt = gaussWeight(gp);
+                        shape = linearShapeFn(gpt);
+                        interp_psi = shape * currentPsi(nodes);
+                        interp_phi_n = shape*current_phi_n(nodes);
+                        interp_phi_p = shape*current_phi_p(nodes);
+                        [E Ederiv] =  EandDeriv(interp_psi, ft, q, interp_phi_n, interp_phi_p, ni, doping);
+                        
+                        M_el(:,:)=M_el(:,:) + shape'*Ederiv*shape*gwt*detJacob;
+                        Fb_el(:)=Fb_el(:) + shape'*E*gwt*detJacob;
+                    end
+                end
+                
+                %   and now put the arrays in the global matrices
+                K(nodes,nodes) = K(nodes,nodes) + K_el;
+                M(nodes,nodes) = M(nodes,nodes) + M_el;
+                T(nodes,nodes) = T(nodes,nodes) + K_el + M_el;
+                Fb(nodes) = Fb(nodes) + Fb_el;
+            end
+            
+            RHS = -K * currentPsi - Fb;
+            
+            if inner_iteration == 1 && outer_iteration == 1    %   calculate reference residual
+                referenceResidual = norm(RHS);
+            end
+            
+            % --------------------------------
+            % -------- Apply BCs ---- --------
+            % --------------------------------
+            
+            deltaPsiBCs = zeros(2,1);                   %   We have already imposed the BCs - we make sure they don't change
+                                                        %   by setting delta psi = 0 for the dirichlet nodes
+            bcwt = trace(T)/length(T);
+            T(fixedDofs,:) = 0;
+            RHS = RHS - T(:,fixedDofs) * deltaPsiBCs;
+            T(:,fixedDofs) = 0;
+            T(fixedDofs,fixedDofs) = speye(length(fixedDofs))*bcwt;
+            RHS(fixedDofs) = 0;
+            
+            residualRatio = norm(RHS) / referenceResidual;
+            fprintf('iteration number %d, residual %e\n', inner_iteration, residualRatio);
+            residualValues(inner_iteration) = residualRatio;
+            
+            deltaPsi = T\RHS;                           %   calculate the soln
+            currentPsi = currentPsi + deltaPsi;         %   and add increment to potential
+            
+%             hold on;
+%             plot(meshcoords, currentPsi);
+%             hold off;
+            
+            inner_iteration = inner_iteration + 1;
+        end
+        
+        % --------------------------------
+        % ------- Solution check --------
+        % --------------------------------
+        psi_diff = abs(( norm(currentPsi) - norm(previousPsi) ) / norm(previousPsi));
+        fprintf('Rel. difference in potential %e\n\n', psi_diff);
+        if(psi_diff < tolerance)
+            fprintf('We have reached convergence for coupled equations in %d steps\n',...
+                outer_iteration-1);
+            break;
+        else
+            previousPsi = currentPsi;
+        end
+        
+        % ----------------------------------------------
+        % -------- Current continuity equations --------
+        % ----------------------------------------------
+       
+        Kn = zeros(nn,nn);
+        fn = zeros(nn,1);
+        Kp = zeros(nn,nn);
+        fp = zeros(nn,1);
+        Pe_n = zeros(nn,1);
+        Pe_p = zeros(nn,1);
+        
+        for element = 1:netotal
+
+            Kn_el = zeros(2, 2);         %   intialise element matrices
+            Kp_el = zeros(2, 2);       
+            nodes = elementConnectivity(element,:);
+            loc_coords = meshcoords(nodes);
+            el_length = loc_coords(2) - loc_coords(1);
+            detJacob = el_length / 2;
+            invJ = 1 / detJacob;
+            gradPsi=[-1/el_length 1/el_length]*currentPsi(nodes);
+            Pe_n(element)=gradPsi*el_length*mu_n/(2*D_n);
+            Pe_p(element)=gradPsi*el_length*mu_p/(2*D_p);
+            if SUPG
+                if abs(Pe_n(element))<eps 
+                    alpha_n=0;
+                else
+                    alpha_n=coth(Pe_n(element)) - 1/Pe_n(element);
+                end
+                if abs(Pe_p(element))<eps
+                    alpha_p=0;
+                else
+                    alpha_p=coth(Pe_p(element)) - 1/Pe_p(element);
+                end
+                Dn_star=D_n + gradPsi*mu_n*alpha_n*el_length/2;
+                Dp_star=D_p + gradPsi*mu_p*alpha_p*el_length/2;
+            else
+                Dn_star=D_n;
+                Dp_star=D_p;
+            end
+            
+            if Pe_n(element) > 1
+                fprintf('Aha! We have a Peclet number greater than 1 in the elec DD equation in element %d\n', element)
+            end
+            if Pe_p(element) > 1
+                fprintf('Aha! We have a Peclet number greater than 1 in the hole DD equation in element %d\n', element)
+            end
+     
+            for gp = 1:length(gaussPoint)
+                gpt = gaussPoint(gp);
+                gwt = gaussWeight(gp);
+                N=linearShapeFn(gpt);
+                gradN=linearShapeFnDeriv(gpt);
+
+                if bubble
+                    shape_n=bubbleShapeFn(gpt,Pe_n(element));
+                    shapeDeriv_n=bubbleShapeFnDeriv(gpt,Pe_n(element));
+                    shape_p=bubbleShapeFn(gpt,-Pe_p(element));
+                    shapeDeriv_p=bubbleShapeFnDeriv(gpt,-Pe_p(element));
+                else
+                    shape_n=N; shape_p=N;
+                    shapeDeriv_n=gradN; shapeDeriv_p=gradN;
+                end
+                Kn_el(:,:) = Kn_el(:,:) + shapeDeriv_n'*invJ*(mu_n*gradPsi*shape_n - Dn_star*shapeDeriv_n*invJ)*gwt*detJacob;
+                Kp_el(:,:) = Kp_el(:,:) + shapeDeriv_p'*invJ*(mu_p*gradPsi*shape_p + Dp_star*shapeDeriv_p*invJ)*gwt*detJacob;    
+            end
+            Kn(nodes,nodes) = Kn(nodes,nodes) + Kn_el;     %  put element matrix in global matrix
+            Kp(nodes,nodes) = Kp(nodes,nodes) + Kp_el;     %  put element matrix in global matrix
+        end
+        
+        bcwt = trace(Kn)/nn;
+        Kn(fixedDofs,:) = 0;
+        Kn(fixedDofs,fixedDofs) = speye(length(fixedDofs))*bcwt;
+        fn(fixedDofs) = current_n(fixedDofs)*bcwt;
+        current_n = (Kn\fn);
+        
+        bcwt = trace(Kn)/nn;
+        Kp(fixedDofs,:) = 0;
+        Kp(fixedDofs,fixedDofs) = speye(length(fixedDofs))*bcwt;
+        fp(fixedDofs) = current_p(fixedDofs)*bcwt;
+        current_p = (Kp\fp);
+
+        outer_iteration = outer_iteration + 1;
+
+    end
+    
+    close all
+    figure;  plot(meshcoords, currentPsi, 'ko-'); grid on;
+    figure;plot(meshcoords, current_p, 'ko-'); grid on; 
+    figure;  plot(meshcoords, current_n, 'ko-'); grid on;
+    
+    export=[meshcoords' currentPsi];
+    save 'datFiles/psiValues.dat' export -ASCII
+    export2=[meshcoords' current_p];
+    save 'datFiles/pValues.dat' export2 -ASCII
+    export3=[meshcoords' current_n];
+    save 'datFiles/nValues.dat' export3 -ASCII
+    
+    % ---------------------
+    % ---- L2 norms -------
+    % ---------------------
+    z=zeros(netotal,2);
+    [L2psi_mesh(loop) L2p_mesh(loop) L2n_mesh(loop)] = L2norm(netotal,meshcoords,currentPsi,current_p, current_n, ...
+                                                              z,elementConnectivity,0);
+    DOF(loop)=nn;
+
+end     %   end the voltage sweep loop
+
+L2pnJunctionPlots( DOF, L2psi_mesh, L2p_mesh, L2n_mesh);
+
+
+
+
+
+
+
+        

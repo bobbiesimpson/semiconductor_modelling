@@ -1,0 +1,95 @@
+K 25
+svn:wc:ra_dav:version-url
+V 87
+/svn/myrepo/!svn/ver/59/programming/semiconductor%20modelling/2d%20pn%20junction/meshes
+END
+vcurvedElms.inp
+K 25
+svn:wc:ra_dav:version-url
+V 103
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/vcurvedElms.inp
+END
+PlotMesh.m~
+K 25
+svn:wc:ra_dav:version-url
+V 99
+/svn/myrepo/!svn/ver/42/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/PlotMesh.m~
+END
+vcurvedElms_Fine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 108
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/vcurvedElms_Fine.inp
+END
+elms.inp
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/elms.inp
+END
+PlotMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 98
+/svn/myrepo/!svn/ver/59/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/PlotMesh.m
+END
+elmsFine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 100
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/elmsFine.inp
+END
+GetMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/59/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/GetMesh.m
+END
+elmsStraight.inp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/elmsStraight.inp
+END
+vcurvedNodes.inp
+K 25
+svn:wc:ra_dav:version-url
+V 104
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/vcurvedNodes.inp
+END
+vcurvedNodes_Fine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 109
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/vcurvedNodes_Fine.inp
+END
+nodes.inp
+K 25
+svn:wc:ra_dav:version-url
+V 97
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/nodes.inp
+END
+nodesFine.inp
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/nodesFine.inp
+END
+FEMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 96
+/svn/myrepo/!svn/ver/46/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/FEMesh.m
+END
+nodesStraight.inp
+K 25
+svn:wc:ra_dav:version-url
+V 105
+/svn/myrepo/!svn/ver/47/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/nodesStraight.inp
+END
+GIDplotMesh.m
+K 25
+svn:wc:ra_dav:version-url
+V 101
+/svn/myrepo/!svn/ver/48/programming/semiconductor%20modelling/2d%20pn%20junction/meshes/GIDplotMesh.m
+END

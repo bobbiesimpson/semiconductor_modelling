@@ -1,0 +1,216 @@
+% testing of the simple 1d advection diffusion equation
+%close all
+clear all
+clc
+
+L=1;
+u=1;
+v=0.001;
+
+enrichment=true;
+bubble=true;
+psi=inline('(1-exp(u/v*x))./(1-exp(u/v*L))','x','u','v','L');
+psiD=inline('-u/v*(exp(u/v*x))./(1-exp(u/v*L))','x','u','v','L');
+psi2=inline('x.^-1','x');
+velocity=inline('50*(1-abs(x-0.1))', 'x');
+
+netotal =10;
+nn=netotal+1;
+totalDof=nn;
+gradingRatio=1;     
+
+meshcoords = elm_line1(0,L,netotal,gradingRatio);
+elmConn = [[1:netotal]' [2:netotal+1]'];  
+fixedDof=[1 nn];
+fixedDofValues=[0 1]';
+
+% ----------------------
+% construct matrices for enrichment
+% ---------------------
+enr_el_conn=zeros(netotal,zeros);
+if enrichment
+    numEnrElmts=1;
+    enr_nod_Dof=zeros(nn,1);
+    for node=1:nn
+        if node >= elmConn(netotal-numEnrElmts+1,1)
+            totalDof = totalDof+1;
+            enr_nod_Dof(node)=totalDof;
+        end
+    end
+    enr_el_conn=enr_nod_Dof(elmConn(:,:));
+end
+
+ngp=12;
+[gpt gwt]=gaussQuad(ngp);
+gpt=nonzeros(gpt); gwt=nonzeros(gwt);
+    
+% ----------------------
+% Petrov Galerkin variables
+% ---------------------
+Pe=u*(L/netotal)/(2*v);
+alpha=coth(Pe) - 1/Pe;
+v_star=v + u*alpha*(L/netotal)/2;
+
+K=zeros(nn,nn);
+Kpg=zeros(nn,nn);
+Kbub=zeros(totalDof,totalDof);
+f=zeros(nn,1);
+fpg=zeros(nn,1);
+fbub=zeros(totalDof,1);
+
+Kshape=zeros(nn,nn);
+fbshape=zeros(nn,1);
+
+for e=1:netotal
+    Kuu=zeros(2,2); Kua=zeros(2,2); Kau=zeros(2,2); Kaa=zeros(2,2); Kpgl=zeros(2,2); 
+    Kb=zeros(2,2);
+    Ks=zeros(2,2); 
+    nodes=elmConn(e,:);
+    elcoords = meshcoords(nodes);
+    el_length = dist(elcoords(1),elcoords(2));
+    Kuu = u/2*[-1 1;-1 1] + v/el_length*[ 1 -1 ; -1 1] ;
+    K(nodes,nodes) = K(nodes,nodes) + Kuu;
+    if e > 0
+        diff=v_star;
+    else
+        diff=v;
+    end
+    Kpgl=u/2*[-1 1;-1 1]+diff/el_length*[ 1 -1 ; -1 1] ;
+    Kpg(nodes,nodes)=Kpg(nodes,nodes) + Kpgl;
+    %Ks=1/el_length*[1 -1; -1 1] + 10/2*[-1 1;-1 1];
+    gradNs=[-1/el_length 1/el_length];
+    % bubble function matrix terms
+    for gp=1:length(gpt)
+        xi=gpt(gp);
+        wt=gwt(gp);
+        Ns=linearShapeFn(xi);
+        x=Ns*elcoords';
+        detJacob=el_length/2;
+        invJ = 1 / detJacob;
+        Nb=bubbleShapeFn(xi,Pe);
+        gradNb=bubbleShapeFnDeriv(xi,Pe)*invJ;
+        Ns=linearShapeFn(xi);
+        gradNs=[-1/el_length 1/el_length];
+        Kb=Kb + (Ns'*u*gradNb + gradNs'*v*gradNb)*wt*detJacob;
+        Ks=Ks + (gradNs'*gradNs + velocity(x)*Ns'*gradNs)*wt*detJacob;
+        
+    end
+    Kbub(nodes,nodes) = Kbub(nodes,nodes) + Kb; 
+    Kshape(nodes,nodes)=Kshape(nodes,nodes) + Ks;
+
+    % ~~~~~~~~~~~~~~~~~~~
+    %   enrichment
+    % ~~~~~~~~~~~~~~~~~~~
+    loc_ens = find(enr_el_conn(e,:));       %   e.g [1], [2], [1 2]
+    glb_edf = enr_el_conn(e,loc_ens);    % eg. [6], [6 7], [7]
+    if ~isempty(loc_ens)
+        psiNod=zeros(1,2); psiD_nod=zeros(1,2);
+        psiNod=psi(elcoords,u,v,L);
+        psiD_nod=psiD(elcoords,u,v,L);
+        detJacob = el_length / 2;
+        
+        for gp=1:length(gpt)
+            xi=gpt(gp);
+            wt=gwt(gp);
+            
+            N=bubbleShapeFn(xi,Pe);
+            gradN=bubbleShapeFnDeriv(xi,Pe)*invJ;
+            Ns=linearShapeFn(xi);
+            gradNs=[-1/el_length 1/el_length];
+
+            x=Ns*elcoords';
+            enrichFn=psi(x,u,artDiff*v,L);
+            enrichFnD=psiD(x,u,artDiff*v,L);
+
+            N_chi = N.*enrichFn;
+            gradN_chi = gradN.*enrichFn + N.*enrichFnD;
+            N_chi_t=Ns.*enrichFn;
+            gradN_chi_t = gradNs.*enrichFn + Ns.*enrichFnD;
+            
+            % XFEM matrix terms
+            Kaa(loc_ens,loc_ens)=Kaa(loc_ens,loc_ens) + ((u*N_chi_t(loc_ens)'*gradN_chi(loc_ens)) + ...
+                                                        (v*gradN_chi_t(loc_ens)'*gradN_chi(loc_ens)))*wt*detJacob;
+            Kua(loc_ens,loc_ens)=Kua(loc_ens,loc_ens) + ((u*Ns(loc_ens)'*gradN_chi(loc_ens)) + ...
+                                                        (v*gradNs(loc_ens)'*gradN_chi(loc_ens)))*wt*detJacob;
+            Kau(loc_ens,loc_ens)=Kau(loc_ens,loc_ens) + ((u*N_chi_t(loc_ens)'*gradN(loc_ens)) + ...
+                                                        (v*gradN_chi_t(loc_ens)'*gradN(loc_ens)))*wt*detJacob;
+                                                    
+        end
+        Kbub(glb_edf, glb_edf) = Kbub(glb_edf,glb_edf) + Kaa(loc_ens,loc_ens);
+        Kbub(nodes,glb_edf) = Kbub(nodes,glb_edf) + Kua(:,loc_ens);
+        Kbub(glb_edf,nodes) = Kbub(glb_edf,nodes) + Kau(loc_ens,:);
+    end
+end
+
+% Galerkin and XFEM matrices
+K(fixedDof,:) = 0;
+f = f - K(:,fixedDof) * fixedDofValues;
+K(:,fixedDof) = 0;
+bcwt = trace(K)/nn;
+K(fixedDof,fixedDof) = speye(length(fixedDof))*bcwt;
+f(fixedDof)=bcwt*fixedDofValues;
+
+% Petrox Galerkin matrices
+Kpg(fixedDof,:) = 0;
+fpg = fpg - Kpg(:,fixedDof) * fixedDofValues;
+Kpg(:,fixedDof) = 0;
+bcwt = trace(Kpg)/nn;
+Kpg(fixedDof,fixedDof) = speye(length(fixedDof))*bcwt;
+fpg(fixedDof)=bcwt*fixedDofValues;
+
+% Bubble function matrix
+Kbub(fixedDof,:) = 0;
+fbub = fbub - Kbub(:,fixedDof) * fixedDofValues;
+Kbub(:,fixedDof) = 0;
+bcwt = trace(Kbub)/nn;
+Kbub(fixedDof,fixedDof) = speye(length(fixedDof))*bcwt;
+fbub(fixedDof)=bcwt*fixedDofValues;
+
+% solutions
+phi_enr=Kbub\fbub
+phi_bub=Kbub(1:nn,1:nn)\fbub(1:nn);
+phi_pg=Kpg\fpg
+phi_gal=K\f;
+
+Kshape(fixedDof,:)=0;
+fbshape = fbshape - Kshape(:,fixedDof)*[1 0]';
+Kshape(:,fixedDof)=0;
+bcwt=trace(Kshape)/nn;
+Kshape(fixedDof,fixedDof)=speye(length(fixedDof))*bcwt;
+fbshape(fixedDof)=bcwt*[1 0]';
+shapeSol=Kshape\fbshape;
+
+figure(1); hold on
+plot(meshcoords,shapeSol,'ro-')
+hold off
+
+% find the solution everywhere using the bubble functions as interpolatin
+% functions
+figure
+hold on
+for e=1:netotal
+    nodes=elmConn(e,:);
+    elcoords = meshcoords(nodes);
+    xi=linspace(-1,1,20);
+    N=linearShapeFn(xi);
+    x=N*elcoords';
+    Nbub=bubbleShapeFn(xi,Pe);
+    nodValues=phi_bub(nodes);
+    internalValues=Nbub*nodValues;
+    plot(x,internalValues,'ko')
+end
+grid on
+x=linspace(0,1);
+plot( x, psi(x,u,v,L), 'k--')
+hold off
+
+figure
+% plot(meshcoords, phi_bub, 'ko-',x, psi(x,u,v,L), 'k--')
+% legend('Bubble', 'exact')
+plot(meshcoords(1:nn), phi_enr(1:nn), 'ko-',meshcoords, phi_gal, 'ks-',meshcoords, phi_pg, 'k^-',...
+     meshcoords, phi_bub, 'kd-', x, psi(x,u,v,L), 'k--')
+grid on
+legend('XFEM', 'Galerkin', 'SUPG', 'bubble', 'exact')
+fileName = ['advDiff_XFEMvsFEM.eps'];
+saveas(gcf, fileName,'epsc');
+

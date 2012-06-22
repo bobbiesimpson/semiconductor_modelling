@@ -1,0 +1,15 @@
+% the exact solution for the 2d advection diffusion equation
+
+% it is based on a series solutin that is obtained using the technique of
+% separation of variables
+
+Pe=10;
+
+x=linspace(0,1);
+y=linspace(0,1);
+
+sumterm=zeros(1,length(x));
+for n=1:100
+, y);
+end
+T=exp(Pe*(x+y)./2).*sumterm;

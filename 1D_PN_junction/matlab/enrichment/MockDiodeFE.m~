@@ -1,0 +1,538 @@
+% This models the analytical solution provided by Mock using finite
+% elements
+
+clear all
+close all
+clc
+
+addpath 1d_advDiff
+
+doWePlot = true;        %   are we plotting?
+SUPG=false;
+bubble=false;
+groupedFE=false;        %   are we using the Grouped FE (equiv to FD for poisson eqn)
+enriched=false;
+
+
+epsilon = 70;
+Na = 1e6;              % 	concentration of acceptor atoms (cm^-3)
+Nd = 1e10;
+V0 = 0;                 %   initial voltage is always zero
+VL = 20;                %   potential on RHS
+
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+% ---------------- geometry ------------------------
+%~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+L = 1;                  %   length of semiconductor (cm)
+x_jun = 0.3;            %   coord of p-n junction (cm)
+ngp = 10;                %   number of gauss points we use
+
+ne_start=30;
+ne_jump=10;
+ne_finish=100;
+loop=0;
+num_meshes=floor((ne_finish-ne_start)/ne_jump);
+
+L2psi_mesh = zeros(1,num_meshes);
+L2n_mesh = zeros(1,num_meshes);
+L2p_mesh = zeros(1,num_meshes);
+DOF = zeros(1,num_meshes);
+numSteps = zeros(1,num_meshes);
+
+for netotal=ne_start:ne_jump:ne_finish
+    
+    loop = loop+1;
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    % ---------------- mesh paramters ------------------
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    nep = floor(netotal*0.3);              %   no. elements in p-region
+    nen = floor(netotal*0.7);              %   no. elements in n-region
+    netotal = nen+nep;      %   total number of elements
+    nn_jun = nep + 1;       %   node number at junction
+    nn = netotal + 1;       %   number of nodes
+    gradingRatio = 1;       %   length of last element / first element
+
+    meshcoords = twoGradedMesh(0,x_jun,L,nep,gradingRatio,nen,gradingRatio);
+    elementConnectivity = [[1:netotal]' [2:netotal+1]'];  %   node connectivity
+    
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    % ---------------- enrichment     ------------------
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    total_dof_n=nn; total_dof_p=nn;
+    enr_nod_dof_n=zeros(nn,1); enr_nod_dof_p=zeros(nn,1);
+    if enriched
+        num = 1;                                  % p enrichment
+        for node=nn_jun-num:nn_jun+num
+            total_dof_p = total_dof_p + 1;
+            enr_nod_dof_p(node) = total_dof_p;
+        end
+        num=3;                                    % n enrichment
+        for node=1:num
+            total_dof_n = total_dof_n + 1;
+            enr_nod_dof_n(node) = total_dof_n;
+        end
+    end
+    enr_el_conn_n = zeros(netotal,2);    % matrix of enriched node connectivity
+    enr_el_conn_p = zeros(netotal,2);
+    for element=1:netotal
+        nodes = elementConnectivity(element,:);
+        enr_el_conn_n(element,:) = enr_nod_dof_n(nodes,:);
+        enr_el_conn_p(element,:) = enr_nod_dof_p(nodes,:);
+    end
+    
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    % ---------boundary conditions + initial guesses ---
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    
+    [N_anal psi_anal n_anal p_anal] = MockDiode(meshcoords, x_jun, VL, Na, Nd, epsilon);
+    
+    % original Mock problem BCs
+    fixedDofs = [1 nn];                 %   Dirichlet nodes
+    freeDof = [2:nn-1];
+    freeDofN = [2:nn_jun-1];
+    freeDofP = [nn_jun+1:nn-1];
+    psi_fixedDofValues = psi_anal(fixedDofs);  %   BC values of potential
+    n_fixedDofValues = n_anal(fixedDofs);
+    p_fixedDofValues = p_anal(fixedDofs);
+    
+    previousPsi = ones(nn,1);      %   The solution from the previous step
+    currentPsi = ones(nn,1)*psi_fixedDofValues(1);
+    currentPsi(fixedDofs) = psi_fixedDofValues;
+    currentPsi(freeDofN) = psi_fixedDofValues(1);
+    currentPsi(nn_jun) = mean(psi_fixedDofValues(:));
+    currentPsi(freeDofP) = psi_fixedDofValues(2);
+    
+    current_n = zeros(nn,1);
+    current_n(fixedDofs) = n_anal(fixedDofs);
+    current_n(freeDofN) = n_anal(fixedDofs(1));
+    current_n(nn_jun) = mean(n_anal(fixedDofs));
+    current_n(freeDofP) = n_anal(fixedDofs(2));
+    
+    current_p = zeros(nn,1);
+    current_p(fixedDofs) = p_anal(fixedDofs);
+    current_p(freeDofN) = p_anal(fixedDofs(1));
+    current_p(nn_jun) = mean(p_anal(fixedDofs));
+    current_p(freeDofP) = p_anal(fixedDofs(2));
+    
+    current_phi_n = zeros(nn,1);
+    current_phi_n(freeDofP) = currentPsi(length(currentPsi)) + abs(log(eps));
+    current_phi_n(1:nn_jun) = currentPsi(1:nn_jun) - log(current_n(1:nn_jun));
+    
+    current_phi_p = zeros(nn,1);
+    current_phi_p(freeDofN) = abs(log(eps)) - currentPsi(1);
+    current_phi_p(nn_jun:nn) = log(current_p(nn_jun:nn)) + currentPsi(nn_jun:nn);
+    
+    % ---------------- NR initialisation  ------------------------
+    
+    tolerance = 1e-8;
+    max_iterations = 500;
+    [gaussPoint gaussWeight] = gaussQuad(ngp);   %   get gauss pts and weights
+    
+    % ---------------- start solution procedure  -----------------
+    
+    psi_diff = 1;       %   rel. difference between potential solns
+    outer_iteration = 1;
+    
+    %   start the outer loop
+    while(true)
+        
+        if outer_iteration > max_iterations
+            disp('reached max number of iterations for outer loop');
+            break;
+        end
+        
+        if(outer_iteration ~= 1)    %   we update our quasi-Fermi level
+            current_phi_n(freeDof) = currentPsi(freeDof) -  log(current_n(freeDof));
+            current_phi_p(freeDof) = log(current_p(freeDof)) + currentPsi(freeDof);
+        end
+        
+        %   inner loop initialisation
+        inner_iteration = 1;
+        residualRatio = 1;
+        residualValues = zeros(1, max_iterations);
+        
+        %  inner loop (Poisson's equation)
+        while residualRatio > tolerance,        %  loop until we've converged
+            
+            if inner_iteration > max_iterations
+                disp('reached max number of iterations for poisson solver');
+                break;
+            end
+            
+            K = zeros(nn, nn);                  %   create and zero global matrices
+            T = zeros(nn, nn);
+            M = zeros(nn, nn);
+            Fb = zeros(nn, 1);
+            
+            for element = 1:netotal
+                
+                K_el = zeros(2, 2);         %   intialise element matrices
+                M_el = zeros(2, 2);
+                Fb_el = zeros(2,1);
+                
+                nodes = elementConnectivity(element,:);
+                x1 = meshcoords(nodes(1));
+                x2 = meshcoords(nodes(2));
+                el_length = x2 - x1;
+                detJacob = el_length / 2;
+                
+                k11 = (1 / el_length);      %   stiffness matrix
+                k12 = -k11;
+                K_el = [ k11 k12 ; k12 k11] .* epsilon;
+                
+                % or the "grouped finite element" matrices
+                nodalDoping=MockDiode(meshcoords(nodes)', x_jun, VL, Na, Nd, epsilon);
+                nodalPsi=currentPsi(nodes);
+                nodalphi_n=current_phi_n(nodes);
+                nodalphi_p=current_phi_p(nodes);
+                nodal_n=exp(nodalPsi-nodalphi_n);
+                nodal_p=exp(nodalphi_p-nodalPsi);
+                Enodal=-(-nodal_n+nodal_p+nodalDoping);
+                EDnodal=(nodal_n+nodal_p);
+                
+                % The grouped FE is directly equivalent to FD for the
+                % poisson equation. See pg 462 of Comp Partial Diff Eqns by
+                % Langtangen
+                if groupedFE
+                    M_el=el_length/2*diag(EDnodal);
+                    Fb_el=el_length/2*Enodal;
+                else
+                    for gp = 1:length(gaussPoint)
+                        gpt = gaussPoint(gp);
+                        gwt = gaussWeight(gp);
+                        shape = linearShapeFn(gpt);
+                        interp_psi = shape * currentPsi(nodes);
+                        interp_phi_n = shape*current_phi_n(nodes);
+                        interp_phi_p = shape*current_phi_p(nodes);
+                        
+                        x = shape*meshcoords(nodes)';
+                        doping = MockDiode(x, x_jun, VL, Na, Nd, epsilon);
+                        
+                        n = exp((interp_psi - interp_phi_n));
+                        p = exp((interp_phi_p - interp_psi));
+                        E = -1*(-n + p + doping);
+                        Ederiv =  (n + p);
+                        
+                        M_el(:,:) = M_el(:,:) + shape'*Ederiv*shape*gwt*detJacob;
+                        Fb_el(:) = Fb_el(:) + shape'*E*gwt*detJacob;
+                    end
+                end
+                
+                %   and now put the arrays in the global matrices
+                K(nodes,nodes) = K(nodes,nodes) + K_el;
+                M(nodes,nodes) = M(nodes,nodes) + M_el;
+                T(nodes,nodes) = T(nodes,nodes) + K_el + M_el;
+                Fb(nodes) = Fb(nodes) + Fb_el;
+            end
+            
+            RHS = -K * currentPsi - Fb;
+            
+            if inner_iteration == 1 && outer_iteration == 1    %   calculate reference residual
+                referenceResidual = norm(RHS);
+            end
+            
+            % ---------------- Boundary Conditions  ------------------------
+            
+            deltaPsiBCs = zeros(2,1);
+            
+            T(fixedDofs,:) = 0;
+            RHS = RHS - T(:,fixedDofs) * deltaPsiBCs;
+            T(:,fixedDofs) = 0;
+            T(fixedDofs,fixedDofs) = speye(length(fixedDofs));
+            RHS(fixedDofs) = 0;
+            
+            residualRatio = norm(RHS) / referenceResidual;
+            fprintf('iteration number %d, residual %e\n', inner_iteration, residualRatio);
+            residualValues(inner_iteration) = residualRatio;
+            
+            deltaPsi = T\RHS;                           %   calculate the soln
+            currentPsi = currentPsi + deltaPsi;         %   and add increment to potential
+            
+            inner_iteration = inner_iteration + 1;
+%             hold on;
+%             plot(meshcoords, currentPsi, 'b--');
+%             hold off;
+        end
+        
+        % ---------------- solution check ---------------------------------------
+
+        psi_diff = abs(( norm(currentPsi) - norm(previousPsi) ) / norm(previousPsi));
+        fprintf('Rel. difference in potential %e\n\n', psi_diff);
+        if(psi_diff < tolerance)
+            fprintf('We have reached convergence for coupled equations in %d steps\n',...
+                outer_iteration-1);
+            numSteps(loop) = outer_iteration-1;
+            break;
+        else
+            previousPsi = currentPsi;
+        end
+        
+        % ---------------- current continuity equations --------------------------
+
+        Kn = zeros(total_dof_n,total_dof_n);
+        fn = zeros(total_dof_n,1);
+        Kp = zeros(total_dof_p,total_dof_p);
+        fp = zeros(total_dof_p,1);
+        Pe = zeros(netotal,1);
+        
+        for element = 1:netotal
+            Kn_el = zeros(2, 2);         %   intialise element matrices
+            Kp_el = zeros(2, 2);         %   intialise element matrices
+            
+            Kpp=zeros(2,2); Kpa=zeros(2,2); Kap=zeros(2,2); Kaa=zeros(2,2);      % Enrichment submatrices
+            Knn=zeros(2,2); Knb=zeros(2,2); Kbn=zeros(2,2); Kbb=zeros(2,2);
+            loc_enr_nods_n = find(enr_el_conn_n(element,:));
+            glb_enr_dof_n = enr_el_conn_n(element,loc_enr_nods_n);
+            
+            nodes = elementConnectivity(element,:);
+            loc_coords = meshcoords(nodes);
+            el_length = loc_coords(2) - loc_coords(1);
+            detJacob = el_length / 2;
+            invJ = 1 / detJacob;
+            gradPsi=[-1/el_length 1/el_length]*currentPsi(nodes);
+            
+            Pe(element)=gradPsi*el_length/2;
+            if SUPG
+                alpha=coth(Pe(element)) - 1/Pe(element);
+                D_star=1 + gradPsi*alpha*el_length/2;
+            else
+                D_star=1;
+            end
+            
+            if Pe(element) > 1
+                fprintf('Aha! We have a Peclet number greater than 1 in element %d\n', element)
+            end
+            
+%             if ~isempty(loc_enr_nods_n) 
+%                 enrichFnNod_n=MockEnrich_n(loc_coords,xj_in,V,Na,Nd,eps);
+%                 
+%             end
+%             
+            for gp = 1:length(gaussPoint)
+                gpt = gaussPoint(gp);
+                gwt = gaussWeight(gp);
+                
+                N=linearShapeFn(gpt);
+                gradN=linearShapeFnDeriv(gpt);
+                
+                if bubble
+                    shape_n=bubbleShapeFn(gpt,Pe(element));
+                    shapeDeriv_n=bubbleShapeFnDeriv(gpt,Pe(element));
+                    shape_p=bubbleShapeFn(gpt,-Pe(element));
+                    shapeDeriv_p=bubbleShapeFnDeriv(gpt,-Pe(element));
+                else
+                    shape_n=N; shape_p=N;
+                    shapeDeriv_n=gradN; shapeDeriv_p=gradN;
+                end
+                Kn_el(:,:) = Kn_el(:,:) + shapeDeriv_n'*invJ*(gradPsi*shape_n - D_star*shapeDeriv_n*invJ)*gwt*detJacob;
+                Kp_el(:,:) = Kp_el(:,:) + shapeDeriv_p'*invJ*(gradPsi*shape_p + D_star*shapeDeriv_p*invJ)*gwt*detJacob;
+                
+                if ~isempty(loc_enr_nods_n)     % we are enriching the electron conc
+                    
+                    x=N*loc_coords';
+                    enrichFn=-MockEnrich_n(loc_coords,xj_in,V,Na,Nd,eps) + MockEnrich_n(x,xj_in,V,Na,Nd,eps);
+                    
+                    N_chi = N.*enrichFn;
+                    gradN_chi = gradN.*enrichFn + N.*enrichFnD;
+
+                    
+                end
+                
+            end
+            Kn(nodes,nodes) = Kn(nodes,nodes) + Kn_el;     %  put element matrix in global matrix
+            Kp(nodes,nodes) = Kp(nodes,nodes) + Kp_el;     %  put element matrix in global matrix
+        end
+        
+        bcwt = trace(Kn)/nn;
+        Kn(fixedDofs,:) = 0;
+        Kn(fixedDofs,fixedDofs) = speye(length(fixedDofs))*bcwt;
+        fn(fixedDofs) = current_n(fixedDofs)*bcwt;
+        current_n = (Kn\fn);
+        
+        bcwt = trace(Kn)/nn;
+        Kp(fixedDofs,:) = 0;
+        Kp(fixedDofs,fixedDofs) = speye(length(fixedDofs))*bcwt;
+        fp(fixedDofs) = current_p(fixedDofs)*bcwt;
+        current_p = (Kp\fp);
+        
+        outer_iteration = outer_iteration + 1;
+        
+        if doWePlot
+            figure(1); hold on;
+            plot(meshcoords, current_p, 'k-'); hold off;
+            
+            figure(2); hold on;
+            plot(meshcoords, current_n, 'k-'); hold off;
+            
+            figure(3); hold on;
+            plot(meshcoords, currentPsi, 'k-'); hold off;
+            psiExport=[meshcoords' currentPsi]; elecExport=[DOF' L2n_mesh'];
+            holeExport=[DOF' L2p_mesh'];
+            potString='1d_adv_diff/unstabilisedResultsFE/unstablePotentialMock.dat';
+            elecString='1d_adv_diff/unstabilisedResultsFE/unstableElecConcMock.dat';
+            holeString='1d_adv_diff/unstabilisedResultsFE/unstableHoleConcMock.dat';
+            
+            save(potString, 'psiExport', '-ASCII');
+            save(elecString, 'elecExport', '-ASCII');
+            save(holeString, 'holeExport', '-ASCII');
+%             badPeElements = find(Pe > 1);
+%             badPeNodes = unique(elementConnectivity(badPeElements,:));
+%             figure(4); plot(meshcoords, ones(length(meshcoords)), 'ko-',...
+%                 meshcoords(badPeNodes), ones(length(badPeNodes)), 'ro-')
+        end
+        
+        
+    end
+    
+    %-------------
+    % soln check
+    % -------------
+%     if doWePlot
+%         figure(4); hold on;
+%         plot(meshcoords, current_p, 'ro-'); hold off;
+%         
+%         figure(5); hold on;
+%         plot(meshcoords, current_n, 'ro-'); hold off;
+%         
+%         figure(6); hold on;
+%         plot(meshcoords, currentPsi, 'ro-'); hold off;
+%     end
+    
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    % ------------------- L2 norms ---------------------
+    %~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    L2psi=0; L2psi_ref=0; L2n=0; L2n_ref=0; L2p=0; L2p_ref=0;
+    for element=1:netotal
+        for gp=1:length(gaussPoint)
+            gpt = gaussPoint(gp);
+            gwt = gaussWeight(gp);
+            detJacob = el_length / 2;
+            nodes = elementConnectivity(element,:);
+            elcoords = meshcoords(nodes);
+            el_length = elcoords(2) - elcoords(1);
+            gradPsi=[-1/el_length 1/el_length]*currentPsi(nodes);
+            Pe=gradPsi*el_length/2;
+            if bubble
+                shape_n=bubbleShapeFn(gpt,Pe);
+                shape_p=bubbleShapeFn(gpt,-Pe);
+            else
+                shape_n = linearShapeFn(gpt);
+                shape_p=shape_n;
+            end
+            stdshape=linearShapeFn(gpt);
+            x = stdshape*meshcoords(nodes)';
+            [N psi n p] =  MockDiode( x, x_jun, VL, Na, Nd, epsilon );
+            
+            psi_h = stdshape*currentPsi(nodes);
+            n_h = shape_n*current_n(nodes);
+            p_h = shape_p*current_p(nodes);
+            
+            L2psi = L2psi + (psi - psi_h)^2*gwt*detJacob;
+            L2psi_ref = L2psi_ref + psi^2*gwt*detJacob;
+            L2n = L2n + (n - n_h)^2*gwt*detJacob;
+            L2n_ref = L2n_ref + n^2*gwt*detJacob;
+            L2p = L2p + (p - p_h)^2*gwt*detJacob;
+            L2p_ref = L2p_ref + p^2*gwt*detJacob;
+        end
+    end
+    
+    L2psi_mesh(loop) = sqrt(L2psi)/sqrt(L2psi_ref);
+    L2n_mesh(loop) = sqrt(L2n)/sqrt(L2n_ref);
+    L2p_mesh(loop) = sqrt(L2p)/sqrt(L2p_ref);
+    DOF(loop) = nn;
+
+end
+
+ROC_psi = log(L2psi_mesh(1)/L2psi_mesh(length(L2psi_mesh)))/log(DOF(length(DOF))/DOF(1));
+ROC_n = log(L2n_mesh(1)/L2n_mesh(length(L2n_mesh)))/log(DOF(length(DOF))/DOF(1));
+ROC_p = log(L2p_mesh(1)/L2p_mesh(length(L2p_mesh)))/log(DOF(length(DOF))/DOF(1));
+
+fprintf('Rate of convergence of L2 norm for psi is:%e\n', ROC_psi)
+fprintf('Rate of convergence of L2 norm for n is:%e\n', ROC_n)
+fprintf('Rate of convergence of L2 norm for p is:%e\n', ROC_p)
+disp(numSteps')
+
+if doWePlot
+    
+   figure(2); hold on; loglog(DOF, L2psi_mesh, 'kd-'); hold off;
+   figure(3); hold on; loglog( DOF, L2n_mesh,'kd-'); hold off;
+   figure(4); hold on; loglog( DOF,L2p_mesh, 'kd-'); hold off;
+   
+   psiExport=[DOF' L2psi_mesh']; elecExport=[DOF' L2n_mesh'];
+   holeExport=[DOF' L2p_mesh'];
+   potString=stringForDATfile('potential', bubble, SUPG, groupedFE );
+   elecString=stringForDATfile('electronConc', bubble, SUPG, groupedFE );
+   holeString=stringForDATfile('holeConc', bubble, SUPG, groupedFE );
+   
+   save(potString, 'psiExport', '-ASCII');
+   save(elecString, 'elecExport', '-ASCII');
+   save(holeString, 'holeExport', '-ASCII');
+   
+   % determine the values of n and p using our bubble functions to
+   % interpolate
+   
+   numPts=10;
+   ninterp=zeros(netotal*numPts,2);
+   pinterp=zeros(netotal*numPts,2);
+   for e=1:netotal
+       xi=linspace(-1,1,10);
+       nodes=elementConnectivity(e,:);
+       elcoords = meshcoords(nodes);
+       N=linearShapeFn(xi);
+       x=N*elcoords';
+       el_length = elcoords(2) - elcoords(1);
+       gradPsi=[-1/el_length 1/el_length]*currentPsi(nodes);
+       Pe=gradPsi*el_length/2;
+       Nbub_n=bubbleShapeFn(xi,Pe);
+       Nbub_p=bubbleShapeFn(xi,-Pe);
+       nodValues_n=current_n(nodes); nodValues_p=current_p(nodes);
+       if bubble
+           internalValues_n=Nbub_n*nodValues_n;
+           internalValues_p=Nbub_p*nodValues_p;
+       else
+           internalValues_n=N*nodValues_n;
+           internalValues_p=N*nodValues_p;
+       end
+       indexSt=(e-1)*10 + 1;
+       indexF=indexSt+9;
+       ninterp(indexSt:indexF,:)= [x internalValues_n];
+       pinterp(indexSt:indexF,:)= [x internalValues_p];
+   end
+   
+   figure;
+   plot(meshcoords, currentPsi,'k-', meshcoords,current_phi_n,'b-',meshcoords,...
+       current_phi_p, 'r-');
+   legend('potential', 'electron Fermi potential', 'hole Fermi potential' );
+   grid on;
+   xlabel('x (cm)');
+   ylabel('potential (V)');
+   fileName = ['potentials_', num2str(V0),'.eps'];
+   saveas(gcf, fileName, 'epsc');
+   
+   x=linspace(0,L,500);
+   [N_anal psi_anal n_anal p_anal] = MockDiode(x, x_jun, VL, Na, Nd, epsilon);
+   
+   figure;
+   plot(meshcoords, current_n, meshcoords, current_p, ninterp(:,1), ninterp(:,2), 'k+',...
+        pinterp(:,1), pinterp(:,2), 'k+', x, n_anal, 'b--', x, p_anal, 'r--');
+   legend('electron concentration', 'hole concentration', 'interp. elec conc', 'interp hole conc.',...
+          'elec anal', 'hole anal');
+   xlabel('x (cm)');
+   ylabel('concentration (cm-3)');
+   grid on;
+   fileName = ['carrierConcentrations_', num2str(V0),'.eps'];
+   saveas(gcf, fileName, 'epsc');
+
+   
+end
+
+
+
+
+
+
+
+
+        
